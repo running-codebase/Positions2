@@ -2,6 +2,7 @@ package com.travis.awesome.positions2;
 
 import android.graphics.Canvas;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.travis.awesome.positions2.levels.Level;
 import com.travis.awesome.positions2.levels.Level1;
@@ -19,27 +20,26 @@ public class GameThread extends Thread {
 	//Thread variables
 	private int level;
 	
-	Level levelInstance;	
-	
 	public GameThread(MainGamePanel view, int level) {
 		Log.d(tag, "inside GameThread");
 		this.view = view;
 		this.level = level;
-		GenerateLevel(level);
-
+		GenerateLevel(view);
+		
 	}
 
 	
-	private void GenerateLevel(int level)
+	private void GenerateLevel(MainGamePanel view)
 	{
 		switch(level){
 			case (1):
-				levelInstance = new Level1();
+				view.level_instance = new Level1();
 				break;
 			case (2):
-				levelInstance = new Level2();				
+				view.level_instance = new Level2();				
 				break;
 		}
+		view.level_instance.initializeLevel(view);
 	}
 	
 	public void setRunning(boolean run) {
@@ -54,16 +54,18 @@ public class GameThread extends Thread {
 		long sleepTime;
 		Log.d(tag, "inside GameThread - run");
 
-		while (running) { 
+		view.level_instance.startLevel();
+		view.level_instance.timer.StartTimer();//Start the game timer
+
+		while (running && view.level_instance.current_state == view.level_instance.RUNNING) { 
 			Canvas c = null; 
 			Log.d(tag, "inside GameThread - run - while loop");
 			startTime = System.currentTimeMillis(); 
 			try 
 			{
-				
-				
 				c = view.getHolder().lockCanvas(); 
 				synchronized (view.getHolder()) { 
+					view.level_instance.updateLevel();
 					view.onDraw(c); 
 				}
 			} 
@@ -87,5 +89,7 @@ public class GameThread extends Thread {
 			}
 
 		}
+		view.level_instance.finishLevel();
+		//Toast.makeText(view.context, "Final Score: " + view.level_instance.score, Toast.LENGTH_LONG).show();
 	}
 }

@@ -1,13 +1,17 @@
 package com.travis.awesome.positions2;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.view.Menu;
 import android.view.Window;
 import android.view.WindowManager;
 
 public class MainActivity extends Activity {
 
+	 protected PowerManager.WakeLock mWakeLock;
+	
 	//Global variables
 	public int level = 1;
 	
@@ -24,4 +28,13 @@ public class MainActivity extends Activity {
        // getMenuInflater().inflate(R.menu.layout_game_window, menu);
         return true;
     }
+	
+	
+	 @Override
+	    public void onDestroy() {
+	        super.onDestroy();
+
+	 
+	 }
+	
 }
