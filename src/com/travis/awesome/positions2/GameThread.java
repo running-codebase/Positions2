@@ -25,7 +25,6 @@ public class GameThread extends Thread {
 		this.view = view;
 		this.level = level;
 		GenerateLevel(view);
-		
 	}
 
 	
@@ -90,6 +89,6 @@ public class GameThread extends Thread {
 
 		}
 		view.level_instance.finishLevel();
-		//Toast.makeText(view.context, "Final Score: " + view.level_instance.score, Toast.LENGTH_LONG).show();
+		view.FinishLevel();
 	}
 }

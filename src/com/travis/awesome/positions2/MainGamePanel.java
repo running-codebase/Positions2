@@ -3,10 +3,12 @@ package com.travis.awesome.positions2;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.graphics.Point;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -26,7 +28,7 @@ import com.travis.awesome.positions2.levels.Level;
 
 public class MainGamePanel extends SurfaceView implements SensorEventListener {
 	final static public String tag = "Tracer";
-	public final double VECTOR_ANGLE_DELTA_THRESHOLD = 0.002;
+	public final double VECTOR_ANGLE_DELTA_THRESHOLD = 0.004;
 	public final int TICKER_THICKNESS = 4;
 	public final int TICKER_OVERLAP = 6;
 	public final int SMOOTHER_SAMPLE_SIZE = 10;
@@ -47,9 +49,13 @@ public class MainGamePanel extends SurfaceView implements SensorEventListener {
 	public Paint whitePaint;
 	public Paint redPaint;
 	public Paint greenPaint;
+	public Paint blackPaint;
+	
+	
 	
 	//Class variables
 	Context context;
+	Activity activity;
 	List<AccelerometerVectorPoint> accelerometer_vector_points = new ArrayList<AccelerometerVectorPoint>();
 	public int screen_width;
 	public int screen_height;
@@ -67,6 +73,7 @@ public MainGamePanel(Context context, int level)
 	{
 	    super(context);
 	    this.context = context;
+	    activity = (Activity) context;
 	    this.setKeepScreenOn(true);
 	    
 	    initScreen();
@@ -81,7 +88,7 @@ public MainGamePanel(Context context, int level)
 	        public void surfaceDestroyed(SurfaceHolder holder) {
 	            boolean retry = true;
 	            Log.d(tag, "Inside SurfaceHolder Callback - surfaceDestroyed");
-	            gameThread.setRunning(false); // Stop the Thread from running because the surface was destroyed.  Can't play a game with no surface!!  
+	            gameThread.setRunning(false); 
 
 	            while (retry) { 
 	                try {
@@ -138,19 +145,24 @@ public MainGamePanel(Context context, int level)
 	    whitePaint= new Paint();
 	    redPaint= new Paint();
 	    greenPaint= new Paint();
+	    blackPaint= new Paint();
 	    
 	    bluePaint.setColor(Color.BLUE);
 	    whitePaint.setColor(Color.WHITE);
 	    redPaint.setColor(Color.RED);
 	    greenPaint.setColor(Color.GREEN);
+	    blackPaint.setColor(Color.BLACK);
+
+	    blackPaint.setStyle(Style.FILL);
+
 	    whitePaint.setTextSize(23);
+	    whitePaint.setStyle(Style.FILL);
 	
 	}
 	
 	@Override
 	protected void onDraw(Canvas canvas) {
 
-		canvas.drawColor(Color.BLACK);
 		level_instance.drawLevel(canvas);
 
 	}
@@ -307,6 +319,11 @@ public MainGamePanel(Context context, int level)
 				normalized_accel[2] = vector[2]/vector_length;
 			}
 		}
+	}
+	
+	public void FinishLevel()
+	{
+		activity.finish();
 	}
 	
 }
